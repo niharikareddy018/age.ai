@@ -3,7 +3,7 @@ from flask_cors import CORS
 from datetime import timedelta
 import os
 from dotenv import load_dotenv
-from extensions import db, jwt
+from backend.extensions import db, jwt
 
 load_dotenv()
 

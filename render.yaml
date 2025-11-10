@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: certificate-vault-api
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: certificate-vault-db
+          property: connectionString
+      - key: BLOCKCHAIN_PROVIDER_URL
+        value: http://127.0.0.1:8545
