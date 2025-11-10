@@ -1,8 +1,11 @@
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_migrate import Migrate
-from .models import db
-import os
+from models import db
+
 
 def create_app():
     """Application factory pattern"""
