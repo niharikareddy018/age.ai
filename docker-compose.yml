@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: certificate-vault-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/certificates
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-change-me-in-production}
+      - ETHEREUM_RPC_URL=${ETHEREUM_RPC_URL:-http://localhost:8545}
+      - CONTRACT_ADDRESS=${CONTRACT_ADDRESS:-}
+      - PRIVATE_KEY=${PRIVATE_KEY:-}
+      - ACCOUNT_ADDRESS=${ACCOUNT_ADDRESS:-}
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: certificate-vault-frontend
+    ports:
+      - "80:80"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: certificate-vault-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=certificates
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
